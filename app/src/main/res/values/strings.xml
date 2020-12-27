@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My Application Retrofit Example</string>
+    <string name="post_id">post ID</string>
+    <string name="load_post_by_id">Load post by ID</string>
+    <string name="load_comments">Load comments</string>
+    <string name="load_posts">Load posts</string>
+</resources>
