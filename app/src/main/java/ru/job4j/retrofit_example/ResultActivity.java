@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 import java.util.Collections;
 import java.util.List;
 import retrofit2.Call;
@@ -24,6 +25,10 @@ public class ResultActivity extends AppCompatActivity {
     private Call<List<Comment>> commentCall;
     private Call<List<Post>> postCall;
     private Call<Post> postByIdCall;
+    private Call<Post> newPostCall;
+    private Call<Post> patchPostCall;
+    private Call<Post> putPostCall;
+    private Call<Void> deletePostCall;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,13 +36,21 @@ public class ResultActivity extends AppCompatActivity {
         recycler = findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         Intent intent = getIntent();
+        int id = intent.getIntExtra("id", 1);
+        int userId = intent.getIntExtra("user_id", 0);
+        String title = intent.getStringExtra("title");
+        String text = intent.getStringExtra("text");
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://jsonplaceholder.typicode.com/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
         this.commentCall = jsonPlaceHolderApi.getComments();
         this.postCall = jsonPlaceHolderApi.getPosts();
-        this.postByIdCall = jsonPlaceHolderApi.getPostById(
-                intent.getIntExtra("id", 1));
+        this.postByIdCall = jsonPlaceHolderApi.getPostById(id);
+        this.newPostCall = jsonPlaceHolderApi.createPost(userId, title, text);
+        Post post = new Post(userId, title, text);
+        this.patchPostCall = jsonPlaceHolderApi.patchPost(id, post);
+        this.putPostCall = jsonPlaceHolderApi.putPost(id, post);
+        this.deletePostCall = jsonPlaceHolderApi.deletePost(id);
         loadItems(intent.getIntExtra("number", 1));
     }
     private void loadItems(int number) {
@@ -52,6 +65,23 @@ public class ResultActivity extends AppCompatActivity {
             }
             case 3: {
                 loadPostById();
+                break;
+            }
+            case 4: {
+                addPost();
+                break;
+            }
+            case 5: {
+                patchPost();
+                break;
+            }
+            case 6: {
+                putPost();
+                break;
+            }
+            case 7: {
+                deletePost();
+                break;
             }
             default: {
                 break;
@@ -101,6 +131,67 @@ public class ResultActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(@NonNull Call<Post> call, @NonNull Throwable t) {
+            }
+        });
+    }
+    private void addPost() {
+        newPostCall.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(@NonNull Call<Post> call, @NonNull Response<Post> response) {
+                if (response.isSuccessful()) {
+                    recycler.setAdapter(new PostLoader.ResultAdapter(
+                            Collections.singletonList(response.body())));
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Post> call, @NonNull Throwable t) {
+            }
+        });
+    }
+    private void patchPost() {
+        patchPostCall.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(@NonNull Call<Post> call, @NonNull Response<Post> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                recycler.setAdapter(new PostLoader.ResultAdapter(
+                        Collections.singletonList(response.body())));
+            }
+            @Override
+            public void onFailure(@NonNull Call<Post> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+    private void putPost() {
+        putPostCall.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(@NonNull Call<Post> call, @NonNull Response<Post> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                recycler.setAdapter(new PostLoader.ResultAdapter(
+                        Collections.singletonList(response.body())));
+            }
+            @Override
+            public void onFailure(@NonNull Call<Post> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+    private void deletePost() {
+        deletePostCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getBaseContext(),
+                            String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+
             }
         });
     }

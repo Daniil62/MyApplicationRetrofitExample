@@ -4,4 +4,14 @@
     <string name="load_post_by_id">Load post by ID</string>
     <string name="load_comments">Load comments</string>
     <string name="load_posts">Load posts</string>
+    <string name="create_post">Create post</string>
+    <string name="user_id">user id</string>
+    <string name="title">title</string>
+    <string name="your_text">your text</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="update_post">Update post</string>
+    <string name="delete_post">Delete post</string>
+    <string name="patch">Patch</string>
+    <string name="put">Put</string>
 </resources>
