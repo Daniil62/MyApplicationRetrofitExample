@@ -39,7 +39,7 @@ public class MainFragment extends Fragment {
         enterId.addTextChangedListener(new NumberMaster() {
             @Override
             public void afterTextChanged(Editable s) {
-                boolean permission = s.length() > 0 && Integer.parseInt(s.toString()) > 0
+                boolean permission = s.length() > 0 && Integer.parseInt(s.toString()) > -1 // -1 чтобы вводить 0 для проверки обработки ошибок.
                         && Integer.parseInt(s.toString()) < 101;
                 updatePostButton.setEnabled(permission);
                 deletePostButton.setEnabled(permission);

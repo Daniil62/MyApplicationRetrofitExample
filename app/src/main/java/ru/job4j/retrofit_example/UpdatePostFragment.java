@@ -41,11 +41,15 @@ public class UpdatePostFragment extends Fragment {
         Intent intent = new Intent(getActivity(), ResultActivity.class);
         int userId = userIdText.getText().toString().equals("")
                 ? 0 : Integer.parseInt(userIdText.getText().toString());
+        String title = titleText.getText().toString().equals("")
+                ? null : titleText.getText().toString();
+        String text = postText.getText().toString().equals("")
+                ? null : postText.getText().toString();
         intent.putExtra("id", id);
         intent.putExtra("number", number);
         intent.putExtra("user_id", userId);
-        intent.putExtra("title", titleText.getText().toString());
-        intent.putExtra("text", postText.getText().toString());
+        intent.putExtra("title", title);
+        intent.putExtra("text", text);
         startActivity(intent);
     }
     private void cancelClick() {
